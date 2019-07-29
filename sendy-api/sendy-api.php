@@ -36,7 +36,7 @@ register_deactivation_hook(__FILE__, 'deactivate_sendy_api');
 
 require plugin_dir_path(__FILE__) . 'includes/class-sendy-api.php';
 
-/*
+    /*
      * Check if WooCommerce is active
      */
 if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
@@ -109,19 +109,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             'type' => 'text'
 
                         ),
-//
-//                        'open_days' => array(
-//                            'id'    => '_custom_level',
-//                            'name'  => '_custom_level[]',
-//                            'type' => 'checkbox',
-//                            'title' => __('Levels', 'sendy-ecommerce'),
-//                            'options' => array(
-//                                'MBO'   => __( 'MBO', 'sendy-ecommerce' ),
-//                                'HBO'   => __( 'HBO', 'sendy-ecommerce' ),
-//                                'WO'    => __( 'WO', 'sendy-ecommerce' )
-//                            ),
-//
-//                        ),
 
                         'open_hours' => array(
                             'title' => __('Shop Opening Hours', 'sendy-ecommerce'),
