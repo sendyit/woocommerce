@@ -3,8 +3,6 @@ function initMap() {}
 (function( $ ) {
 	'use strict';
     console.log('ready');
-    $('label[for=woocommerce_sendy-ecommerce_from_lat], input#woocommerce_sendy-ecommerce_from_lat').hide();
-    $('label[for=woocommerce_sendy-ecommerce_from_long], input#woocommerce_sendy-ecommerce_from_long').hide();
     $(() => {
         initMap = function() {
             console.log('initializing maps');

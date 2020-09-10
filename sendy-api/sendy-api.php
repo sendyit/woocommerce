@@ -4,8 +4,8 @@
  * Plugin Name:       Sendy Ecommmerce
  * Plugin URI:        https://github.com/sendyit/woocommerce
  * Description:       This is the Sendy WooCommerce Plugin for Sendy Public API.
- * Version:           1.0.0
- * Author:            Dervine N
+ * Version:           1.0.1
+ * Author:            Sendy Engineering
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       sendy-api
@@ -98,6 +98,15 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             'placeholder' => 'Enter a location',
                             'description' => __('Please Pick From Google Map Suggestions.', 'sendy-ecommerce')
                         ),
+                        'from_lat' => array(
+                            'title' => __('Latitude', 'sendy-ecommerce'),
+                            'type' => 'text'
+                        ),
+
+                        'from_long' => array(
+                            'title' => __('Longitude', 'sendy-ecommerce'),
+                            'type' => 'text'
+                        ),
 
                         'building' => array(
                             'title' => __('Building', 'sendy-ecommerce'),
@@ -159,17 +168,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         'other_details' => array(
                             'title' => __('Other Details', 'sendy-ecommerce'),
                             'type' => 'textarea'
-                        ),
-
-                        'from_lat' => array(
-                            'title' => __('from_lat', 'sendy-ecommerce'),
-                            'type' => 'text'
-                        ),
-
-                        'from_long' => array(
-                            'title' => __('from_long', 'sendy-ecommerce'),
-                            'type' => 'text'
-                        ),
+                        )
 
                     );
 
@@ -255,8 +254,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
     add_filter('woocommerce_shipping_methods', 'add_sendy_shipping_method');
 
-    add_action('woocommerce_cart_totals_before_shipping', 'get_delivery_address');
-
     function get_delivery_address()
     {
         echo '<div class="sendy-api">
@@ -277,8 +274,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             </div>';
     }
 
-    add_action('wp_enqueue_scripts', 'add_js_scripts');
-    add_action('wp_enqueue_scripts', 'add_style');
+    add_action( 'woocommerce_cart_totals_before_shipping', 'get_delivery_address', 10, 0 ); 
+
+
     function add_js_scripts()
     {
         wp_register_script('moment', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js', null, null, true);
@@ -294,13 +292,16 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         wp_enqueue_style('styles', plugin_dir_url(__FILE__) . '/public/css/sendy-api-public.css', false);
     }
 
-    add_action('admin_enqueue_scripts', 'add_admin_scripts');
+    add_action('wp_enqueue_scripts', 'add_js_scripts');
+    add_action('wp_enqueue_scripts', 'add_style');
 
     function add_admin_scripts()
     {
         wp_enqueue_script('admin-script', plugin_dir_url(__FILE__) . '/admin/js/sendy-api-admin.js', array('jquery'), '1.0', true);
     }
+    add_action('admin_enqueue_scripts', 'add_admin_scripts');
 
+    
     function getPriceQuote($delivery = false, $type = "quote", $pick_up_date = "2018-09-11 12:12:12", $note = "Sample Note", $recepient_name = "Dervine N", $recepient_phone = "0716163362", $recepient_email = "ndervine@sendy.co.ke")
     {
         //if post is set
@@ -348,7 +349,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         "recepient": {
                           "recepient_name": "' . $recepient_name . '",
                           "recepient_phone": "' . $recepient_phone . '",
-                          "recepient_email": "' . $recepient_email . '"
+                          "recepient_email": "' . $recepient_email . '",
+                          "recepient_notes":""
                         },
                         "delivery_details": {
                           "pick_up_date": "' . $pick_up_date . '",
@@ -378,7 +380,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                       "request_token_id": "request_token_id"
                     }';
         $payload = json_encode(json_decode($request, true));
-        $ch = curl_init('https://api.sendyit.com/v1/#request');
+        $ch = curl_init('https://apitest.sendyit.com/v1/');
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
