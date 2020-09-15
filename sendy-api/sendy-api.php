@@ -79,6 +79,15 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 function init_form_fields()
                 {
                     $this->form_fields = array(
+                        'environment' => array(
+                            'title' => __('Environment', 'sendy-environment'),
+                            'type' => 'select',
+                            'options' => array(
+                                'blank' => __('Select Sendy Environment', 'sendy-ecommerce'),
+                                'sandbox' => __('Sandbox', 'sendy-ecommerce'),
+                                'live' => __('Live', 'sendy-ecommerce')
+                                  )
+                        ),
                         'sendy_api_key' => array(
                             'title' => __('Sendy Api Key', 'sendy-ecommerce'),
                             'type' => 'text',
@@ -162,6 +171,21 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 '18' => __('6:00 PM', 'sendy-ecommerce'),
                                 '19' => __('7:00 PM', 'sendy-ecommerce'),
                                 '20' => __('8:00 PM', 'sendy-ecommerce')
+                            )
+                        ),
+
+                        'vendor_type' => array(
+                            'title' => __('Default Vendor Type', 'sendy-ecommerce'),
+                            'type' => 'select',
+                            'options' => array(
+                                'blank' => __('Select Vendor Type', 'sendy-ecommerce'),
+                                '21' => __('Runner', 'sendy-ecommerce'),
+                                '1' => __('Bike', 'sendy-ecommerce'),
+                                '2' => __('Pick Up', 'sendy-ecommerce'),
+                                '6' => __('3T Truck', 'sendy-ecommerce'),
+                                '10' => __('5T Truck', 'sendy-ecommerce'),
+                                '13' => __('7T Truck', 'sendy-ecommerce'),
+                                '14' => __('10T Truck', 'sendy-ecommerce')
                             )
                         ),
 
