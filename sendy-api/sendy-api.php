@@ -400,9 +400,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         $sender_notes = $sendy_settings['sender_notes'];
 
 
-        $notify_recipient = $sendy_settings['notify_recipient'];
-        $notify_sender = $sendy_settings['notify_sender'];
-
+        $notify_recipient = boolval($sendy_settings['notify_recipient']) ? 'true' : 'false';
+        $notify_sender = boolval($sendy_settings['notify_sender']) ? 'true' : 'false';
 
         if($pick_up_date === null) {
             $pick_up_date =  date('m/d/Y h:i:s a', time());
@@ -432,16 +431,17 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                           "recepient_phone": "' . $recepient_phone . '",
                           "recepient_email": "' . $recepient_email . '",
                           "recepient_notes":"",
-                          "recepient_notify":"'. boolval($notify_recipient).'"
+                          "recepient_notify":"'.$notify_recipient.'"
                         },
                         "sender": {
                             "sender_name": "' . $sender_name . '",
                             "sender_phone": "' . $sender_phone . '",
                             "sender_email": "' . $sender_email . '",
                             "sender_notes":"",
-                            "sender_notify":"'. boolval($notify_sender).'"
+                            "sender_notify":"'. $notify_sender.'"
                           },
                         "delivery_details": {
+                          "express": true,
                           "pick_up_date": "' . $pick_up_date . '",
                           "return": false,
                           "note": "' . $note . '",
@@ -464,7 +464,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     }';
         
         $payload = json_encode(json_decode($request, true));
-
+        
         $request_url = "https://apitest.sendyit.com/v1/";
 
         if($sendy_settings['environment'] === 'live') {
@@ -559,8 +559,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $fName = $order->billing_first_name;
                 $lName = $order->billing_last_name;
                 $name = $fName . ' ' . $lName;
-                $phone = $order->billing_email;
-                $email = $order->billing_phone;
+                $phone = $order->billing_phone;
+                $email = $order->billing_email;
                 $sendy_settings = get_option('woocommerce_sendy-ecommerce_settings');
                 $order_no = $orderNo;
                 $sendy_hour = 14;
@@ -579,15 +579,14 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 }
 
                 $orderDetails = getPriceQuote(true, $type, $pick_up_date, $note, $name, $phone, $email);
-                
-                if($sendy_settings['environment'] === 'live') {
-                    $tracking_url = 'https://app.sendyit.com/external/tracking/' . $order_no;
-                } else {
-                    $tracking_url = 'https://webapptest.sendyit.com/external/tracking/' . $order_no;
+                $orderDetails = json_decode($orderDetails, true);
 
-                }
+                if($orderDetails['status'] === true) {
+                    $tracking_link = $orderDetails['data']['tracking_link'];
+                    echo "<p><a target=\"_tab\" href='" . $tracking_link . "'> Click Here To Track Your Sendy Order. </a></p>";
+
+                }   
                 
-                echo "<p><a target=\"_tab\" href='" . $tracking_url . "'> Click Here To Track Your Sendy Order. </a></p>";
                 return;
             
         }
