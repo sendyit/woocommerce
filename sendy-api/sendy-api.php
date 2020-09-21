@@ -373,14 +373,15 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             $to_lat = $_POST['to_lat'];
             $to_long = $_POST['to_long'];
             //then update session
-            $_SESSION['to_name'] = $to_name;
-            $_SESSION['to_lat'] = $to_lat;
-            $_SESSION['to_long'] = $to_long;
+            WC()->session->set( 'sendyToName' , $to_name );
+            WC()->session->set( 'sendyToLat' , $to_lat );
+            WC()->session->set( 'sendyToLong' , $to_long );
+     
         } else {
             //use session
-            $to_name = $_SESSION['to_name'];
-            $to_lat = $_SESSION['to_lat'];
-            $to_long = $_SESSION['to_long'];
+            $to_name = WC()->session->get( 'sendyToName');
+            $to_lat = WC()->session->get( 'sendyToLat');
+            $to_long = WC()->session->get( 'sendyToLong');
         }
         $to_name = $to_name;
         $to_lat = $to_lat;
@@ -392,7 +393,18 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         $pickup_lat = $sendy_settings['from_lat'];
         $pickup_long = $sendy_settings['from_long'];
         $vendor_type = $sendy_settings['vendor_type'];
+
+        var_dump($vendor_type);
+
+        $sender_name = $sendy_settings['sender_name'];
+        $sender_phone = $sendy_settings['sender_phone'];
+        $sender_email = $sendy_settings['sender_email'];
+        $sender_notes = $sendy_settings['sender_notes'];
+
+
         $notify_recipient = $sendy_settings['notify_recipient'];
+        $notify_sender = $sendy_settings['notify_sender'];
+
 
         if($pick_up_date === null) {
             $pick_up_date =  date('m/d/Y h:i:s a', time());
@@ -424,6 +436,13 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                           "recepient_notes":"",
                           "recepient_notify":"'. boolval($notify_recipient).'"
                         },
+                        "sender": {
+                            "sender_name": "' . $sender_name . '",
+                            "sender_phone": "' . $sender_phone . '",
+                            "sender_email": "' . $sender_email . '",
+                            "sender_notes":"",
+                            "sender_notify":"'. boolval($notify_sender).'"
+                          },
                         "delivery_details": {
                           "pick_up_date": "' . $pick_up_date . '",
                           "return": false,
@@ -476,7 +495,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             echo $result;
             die();
         } else if ($type == "delivery") {
-            return;
+            return $result;
         }
 
     }
@@ -530,14 +549,13 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     add_action('woocommerce_thankyou', 'completeOrder', 10, 1);
 
     function completeOrder($order_id)
-    {
+    {   
 
         if (!$order_id) {
             return;
         } else {
-            if (!session_id()) {
-                session_start();
-            } else {
+                $orderNo = WC()->session->get( 'sendyOrderNo');
+
                 $order = new WC_Order($order_id);
                 $note = $order->customer_message;
                 $fName = $order->billing_first_name;
@@ -546,7 +564,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $phone = $order->billing_email;
                 $email = $order->billing_phone;
                 $sendy_settings = get_option('woocommerce_sendy-ecommerce_settings');
-                $order_no = $_SESSION['sendyOrderNo'];
+                $order_no = $orderNo;
                 $sendy_hour = 14;
                 $type = "delivery";
                 $open_hour = $sendy_settings['open_hours'];
@@ -562,13 +580,18 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $pick_up_date = date("Y-m-d H:i:s", strtotime('+3 hours'));
                 }
 
-                getPriceQuote(true, $type, $pick_up_date, $note, $name, $phone, $email);
+                $orderDetails = getPriceQuote(true, $type, $pick_up_date, $note, $name, $phone, $email);
 
-                $tracking_url = 'https://app.sendyit.com/biz/sendyconnect/track/' . $order_no;
+                if($sendy_settings['environment'] === 'live') {
+                    $tracking_url = 'https://app.sendyit.com/external/tracking/' . $order_no;
+                } else {
+                    $tracking_url = 'https://webapptest.sendyit.com/external/tracking/' . $order_no;
 
+                }
+                
                 echo "<p><a target=\"_tab\" href='" . $tracking_url . "'> Click Here To Track Your Sendy Order. </a></p>";
                 return;
-            }
+            
         }
     }
 }
