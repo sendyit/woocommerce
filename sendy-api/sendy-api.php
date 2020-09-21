@@ -466,8 +466,12 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         $json = json_decode($result, true);
         $cost = $json['data']['amount'];
         $order_no = $json['data']['order_no'];
-        $_SESSION['arrayImg'] = $cost;
-        $_SESSION['sendyOrderNo'] = $order_no;
+        
+        WC()->session->set( 'sendyOrderCost' , $cost );
+        WC()->session->set( 'sendyOrderNo' , $order_no );
+        WC()->session->set( 'qouteSet' , true );
+
+
         if ($type == "quote") {
             echo $result;
             die();
@@ -484,6 +488,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     function displayDelivery()
     {
         if (isset($_POST)) {
+
             $hour = $order_hour = $var = date('H', strtotime('+3 hours'));
             if ($hour >= 14 && $hour <= 20) {
                 echo '<div id="delivery-info" class="alert alert-info">
@@ -505,11 +510,14 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     add_action('wp_ajax_displayDelivery', 'displayDelivery');
 
     function setSendyDeliveryCost($rates, $package)
-    {
-        if (!session_id())
-            session_start();
+    {   
 
-        $cost = $_SESSION['arrayImg'];
+        if(WC()->session->get( 'qouteSet')){
+            $cost = WC()->session->get( 'sendyOrderCost');
+        } else {
+            $cost = 250; // default
+        }
+        
         if (isset($rates['sendy-ecommerce'])) {
             $rates['sendy-ecommerce']->cost = $cost;
         }
