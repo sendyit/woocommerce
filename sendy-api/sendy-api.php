@@ -394,8 +394,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         $pickup_long = $sendy_settings['from_long'];
         $vendor_type = $sendy_settings['vendor_type'];
 
-        var_dump($vendor_type);
-
         $sender_name = $sendy_settings['sender_name'];
         $sender_phone = $sendy_settings['sender_phone'];
         $sender_email = $sendy_settings['sender_email'];
@@ -581,7 +579,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 }
 
                 $orderDetails = getPriceQuote(true, $type, $pick_up_date, $note, $name, $phone, $email);
-
+                
                 if($sendy_settings['environment'] === 'live') {
                     $tracking_url = 'https://app.sendyit.com/external/tracking/' . $order_no;
                 } else {
