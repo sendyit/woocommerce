@@ -4,8 +4,8 @@
  * Plugin Name:       Sendy Ecommmerce
  * Plugin URI:        https://github.com/sendyit/woocommerce
  * Description:       This is the Sendy WooCommerce Plugin for Sendy Public API.
- * Version:           1.0.0
- * Author:            Dervine N
+ * Version:           1.0.1
+ * Author:            Sendy Engineering
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       sendy-api
@@ -79,6 +79,15 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 function init_form_fields()
                 {
                     $this->form_fields = array(
+                        'environment' => array(
+                            'title' => __('Environment', 'sendy-ecommerce'),
+                            'type' => 'select',
+                            'options' => array(
+                                'blank' => __('Select Sendy Environment', 'sendy-ecommerce'),
+                                'sandbox' => __('Sandbox', 'sendy-ecommerce'),
+                                'live' => __('Live', 'sendy-ecommerce')
+                                  )
+                        ),
                         'sendy_api_key' => array(
                             'title' => __('Sendy Api Key', 'sendy-ecommerce'),
                             'type' => 'text',
@@ -98,17 +107,17 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             'placeholder' => 'Enter a location',
                             'description' => __('Please Pick From Google Map Suggestions.', 'sendy-ecommerce')
                         ),
-
-                        'building' => array(
-                            'title' => __('Building', 'sendy-ecommerce'),
+                        'from_lat' => array(
+                            'title' => __('Latitude', 'sendy-ecommerce'),
                             'type' => 'text'
                         ),
 
-                        'floor' => array(
-                            'title' => __('Floor', 'sendy-ecommerce'),
+                        'from_long' => array(
+                            'title' => __('Longitude', 'sendy-ecommerce'),
                             'type' => 'text'
-
                         ),
+
+                       
 
                         'open_hours' => array(
                             'title' => __('Shop Opening Hours', 'sendy-ecommerce'),
@@ -156,20 +165,73 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             )
                         ),
 
-                        'other_details' => array(
-                            'title' => __('Other Details', 'sendy-ecommerce'),
+                        'vendor_type' => array(
+                            'title' => __('Default Vendor Type', 'sendy-ecommerce'),
+                            'type' => 'select',
+                            'options' => array(
+                                'blank' => __('Select Vendor Type', 'sendy-ecommerce'),
+                                '21'    => __('Runner', 'sendy-ecommerce'),
+                                '1'     => __('Bike', 'sendy-ecommerce'),
+                                '2'     => __('Pick Up', 'sendy-ecommerce'),
+                                '6'     => __('3T Truck', 'sendy-ecommerce'),
+                                '10'    => __('5T Truck', 'sendy-ecommerce'),
+                                '13'    => __('7T Truck', 'sendy-ecommerce'),
+                                '14'    => __('10T Truck', 'sendy-ecommerce')
+                            )
+                        ),
+                        'sender_name' => array(
+                            'title' => __('Sender Name', 'sendy-ecommerce'),
+                            'type' => 'text'
+                        ),
+                        'sender_phone' => array(
+                            'title' => __('Sender Phone', 'sendy-ecommerce'),
+                            'type' => 'text'
+                        ),
+                        'sender_email' => array(
+                            'title' => __('Sender Email', 'sendy-ecommerce'),
+                            'type' => 'text'
+                        ),
+                        'sender_notes' => array(
+                            'title' => __('Sender Delivery Notes', 'sendy-ecommerce'),
                             'type' => 'textarea'
                         ),
 
-                        'from_lat' => array(
-                            'title' => __('from_lat', 'sendy-ecommerce'),
+                        'notify_sender' => array(
+                            'title' => __('Notify Sender', 'sendy-ecommerce'),
+                            'type' => 'select',
+                            'options' => array(
+                                'blank' => __('Notify Sender', 'sendy-ecommerce'),
+                                true    => __('Yes', 'sendy-ecommerce'),
+                                false     => __('No', 'sendy-ecommerce')
+                            )
+                        ),
+                        'notify_recipient' => array(
+                            'title' => __('Notify Recipient', 'sendy-ecommerce'),
+                            'type' => 'select',
+                            'options' => array(
+                                'blank' => __('Notify Recipient', 'sendy-ecommerce'),
+                                true    => __('Yes', 'sendy-ecommerce'),
+                                false     => __('No', 'sendy-ecommerce')
+                            )
+                        ),
+
+                        'building' => array(
+                            'title' => __('Building', 'sendy-ecommerce'),
                             'type' => 'text'
                         ),
 
-                        'from_long' => array(
-                            'title' => __('from_long', 'sendy-ecommerce'),
+                        'floor' => array(
+                            'title' => __('Floor', 'sendy-ecommerce'),
                             'type' => 'text'
+
                         ),
+
+                        'other_details' => array(
+                            'title' => __('Other Details', 'sendy-ecommerce'),
+                            'type' => 'textarea'
+                        )
+
+                        
 
                     );
 
@@ -255,8 +317,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
     add_filter('woocommerce_shipping_methods', 'add_sendy_shipping_method');
 
-    add_action('woocommerce_cart_totals_before_shipping', 'get_delivery_address');
-
     function get_delivery_address()
     {
         echo '<div class="sendy-api">
@@ -277,8 +337,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             </div>';
     }
 
-    add_action('wp_enqueue_scripts', 'add_js_scripts');
-    add_action('wp_enqueue_scripts', 'add_style');
+    add_action( 'woocommerce_cart_totals_before_shipping', 'get_delivery_address', 10, 0 ); 
+
+
     function add_js_scripts()
     {
         wp_register_script('moment', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js', null, null, true);
@@ -294,14 +355,17 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         wp_enqueue_style('styles', plugin_dir_url(__FILE__) . '/public/css/sendy-api-public.css', false);
     }
 
-    add_action('admin_enqueue_scripts', 'add_admin_scripts');
+    add_action('wp_enqueue_scripts', 'add_js_scripts');
+    add_action('wp_enqueue_scripts', 'add_style');
 
     function add_admin_scripts()
     {
         wp_enqueue_script('admin-script', plugin_dir_url(__FILE__) . '/admin/js/sendy-api-admin.js', array('jquery'), '1.0', true);
     }
+    add_action('admin_enqueue_scripts', 'add_admin_scripts');
 
-    function getPriceQuote($delivery = false, $type = "quote", $pick_up_date = "2018-09-11 12:12:12", $note = "Sample Note", $recepient_name = "Dervine N", $recepient_phone = "0716163362", $recepient_email = "ndervine@sendy.co.ke")
+    
+    function getPriceQuote($delivery = false, $type = "quote",  $pick_up_date = null,    $note = "Sample Note", $recepient_name = "Dervine N", $recepient_phone = "0716163362", $recepient_email = "ndervine@sendy.co.ke")
     {
         //if post is set
         if (isset($_POST['to_name'])) {
@@ -309,14 +373,15 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             $to_lat = $_POST['to_lat'];
             $to_long = $_POST['to_long'];
             //then update session
-            $_SESSION['to_name'] = $to_name;
-            $_SESSION['to_lat'] = $to_lat;
-            $_SESSION['to_long'] = $to_long;
+            WC()->session->set( 'sendyToName' , $to_name );
+            WC()->session->set( 'sendyToLat' , $to_lat );
+            WC()->session->set( 'sendyToLong' , $to_long );
+     
         } else {
             //use session
-            $to_name = $_SESSION['to_name'];
-            $to_lat = $_SESSION['to_lat'];
-            $to_long = $_SESSION['to_long'];
+            $to_name = WC()->session->get( 'sendyToName');
+            $to_lat = WC()->session->get( 'sendyToLat');
+            $to_long = WC()->session->get( 'sendyToLong');
         }
         $to_name = $to_name;
         $to_lat = $to_lat;
@@ -327,12 +392,28 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         $pickup = $sendy_settings['shop_location'];
         $pickup_lat = $sendy_settings['from_lat'];
         $pickup_long = $sendy_settings['from_long'];
+        $vendor_type = $sendy_settings['vendor_type'];
+
+        $sender_name = $sendy_settings['sender_name'];
+        $sender_phone = $sendy_settings['sender_phone'];
+        $sender_email = $sendy_settings['sender_email'];
+        $sender_notes = $sendy_settings['sender_notes'];
+
+
+        $notify_recipient = boolval($sendy_settings['notify_recipient']) ? 'true' : 'false';
+        $notify_sender = boolval($sendy_settings['notify_sender']) ? 'true' : 'false';
+
+        if($pick_up_date === null) {
+            $pick_up_date =  date('m/d/Y h:i:s a', time());
+        }
+
+
         $request = '{
                       "command": "request",
                       "data": {
                         "api_key": "' . $api_key . '",
                         "api_username": "' . $api_username . '",
-                        "vendor_type": 1,
+                        "vendor_type": "'. $vendor_type .'",
                         "from": {
                           "from_name": "' . $pickup . '",
                           "from_lat": "' . $pickup_lat . '",
@@ -348,21 +429,25 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         "recepient": {
                           "recepient_name": "' . $recepient_name . '",
                           "recepient_phone": "' . $recepient_phone . '",
-                          "recepient_email": "' . $recepient_email . '"
+                          "recepient_email": "' . $recepient_email . '",
+                          "recepient_notes":"",
+                          "recepient_notify":"'.$notify_recipient.'"
                         },
-                        "delivery_details": {
-                          "pick_up_date": "' . $pick_up_date . '",
-                          "collect_payment": {
-                            "status": false,
-                            "pay_method": 0,
-                            "amount": 10
+                        "sender": {
+                            "sender_name": "' . $sender_name . '",
+                            "sender_phone": "' . $sender_phone . '",
+                            "sender_email": "' . $sender_email . '",
+                            "sender_notes":"",
+                            "sender_notify":"'. $notify_sender.'"
                           },
-                          "return": true,
+                        "delivery_details": {
+                          "express": true,
+                          "pick_up_date": "' . $pick_up_date . '",
+                          "return": false,
                           "note": "' . $note . '",
                           "note_status": true,
                           "request_type": "' . $type . '",
                           "order_type": "ondemand_delivery",
-                          "ecommerce_order": "ecommerce_order_001",
                           "skew": 1,
                           "package_size": [
                             {
@@ -377,8 +462,16 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                       },
                       "request_token_id": "request_token_id"
                     }';
+        
         $payload = json_encode(json_decode($request, true));
-        $ch = curl_init('https://api.sendyit.com/v1/#request');
+        
+        $request_url = "https://apitest.sendyit.com/v1/";
+
+        if($sendy_settings['environment'] === 'live') {
+            $request_url = "https://api.sendyit.com/v1/";
+        }
+
+        $ch = curl_init($request_url);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -390,13 +483,17 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         $json = json_decode($result, true);
         $cost = $json['data']['amount'];
         $order_no = $json['data']['order_no'];
-        $_SESSION['arrayImg'] = $cost;
-        $_SESSION['sendyOrderNo'] = $order_no;
+        
+        WC()->session->set( 'sendyOrderCost' , $cost );
+        WC()->session->set( 'sendyOrderNo' , $order_no );
+        WC()->session->set( 'qouteSet' , true );
+
+
         if ($type == "quote") {
             echo $result;
             die();
         } else if ($type == "delivery") {
-            return;
+            return $result;
         }
 
     }
@@ -408,6 +505,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     function displayDelivery()
     {
         if (isset($_POST)) {
+
             $hour = $order_hour = $var = date('H', strtotime('+3 hours'));
             if ($hour >= 14 && $hour <= 20) {
                 echo '<div id="delivery-info" class="alert alert-info">
@@ -429,11 +527,14 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     add_action('wp_ajax_displayDelivery', 'displayDelivery');
 
     function setSendyDeliveryCost($rates, $package)
-    {
-        if (!session_id())
-            session_start();
+    {   
 
-        $cost = $_SESSION['arrayImg'];
+        if(WC()->session->get( 'qouteSet')){
+            $cost = WC()->session->get( 'sendyOrderCost');
+        } else {
+            $cost = 250; // default
+        }
+        
         if (isset($rates['sendy-ecommerce'])) {
             $rates['sendy-ecommerce']->cost = $cost;
         }
@@ -446,23 +547,22 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     add_action('woocommerce_thankyou', 'completeOrder', 10, 1);
 
     function completeOrder($order_id)
-    {
+    {   
 
         if (!$order_id) {
             return;
         } else {
-            if (!session_id()) {
-                session_start();
-            } else {
+                $orderNo = WC()->session->get( 'sendyOrderNo');
+
                 $order = new WC_Order($order_id);
                 $note = $order->customer_message;
                 $fName = $order->billing_first_name;
                 $lName = $order->billing_last_name;
                 $name = $fName . ' ' . $lName;
-                $phone = $order->billing_email;
-                $email = $order->billing_phone;
+                $phone = $order->billing_phone;
+                $email = $order->billing_email;
                 $sendy_settings = get_option('woocommerce_sendy-ecommerce_settings');
-                $order_no = $_SESSION['sendyOrderNo'];
+                $order_no = $orderNo;
                 $sendy_hour = 14;
                 $type = "delivery";
                 $open_hour = $sendy_settings['open_hours'];
@@ -478,13 +578,17 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $pick_up_date = date("Y-m-d H:i:s", strtotime('+3 hours'));
                 }
 
-                getPriceQuote(true, $type, $pick_up_date, $note, $name, $phone, $email);
+                $orderDetails = getPriceQuote(true, $type, $pick_up_date, $note, $name, $phone, $email);
+                $orderDetails = json_decode($orderDetails, true);
 
-                $tracking_url = 'https://app.sendyit.com/biz/sendyconnect/track/' . $order_no;
+                if($orderDetails['status'] === true) {
+                    $tracking_link = $orderDetails['data']['tracking_link'];
+                    echo "<p><a target=\"_tab\" href='" . $tracking_link . "'> Click Here To Track Your Sendy Order. </a></p>";
 
-                echo "<p><a target=\"_tab\" href='" . $tracking_url . "'> Click Here To Track Your Sendy Order. </a></p>";
+                }   
+                
                 return;
-            }
+            
         }
     }
 }
