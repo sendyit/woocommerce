@@ -2,13 +2,13 @@ let script = document.createElement('script');
 script.src = 'https://maps.googleapis.com/maps/api/js?&libraries=places&key=AIzaSyD5y2Y1zfyWCWDEPRLDBDYuRoJ8ReHYXwY&callback=initMap';
 document.head.appendChild(script);
 
-// jQuery.getScript("https://maps.googleapis.com/maps/api/js?&libraries=places&key=AIzaSyD5y2Y1zfyWCWDEPRLDBDYuRoJ8ReHYXwY&callback=initMap");
 function initMap() {}
 (function( $ ) {
     'use strict';
     console.log('ready');
     $('.woocommerce-shipping-destination').hide();
     $('.woocommerce-shipping-fields').hide();
+
     $(() => {
         initMap = function() {
             console.log('initializing maps');
@@ -31,7 +31,29 @@ function initMap() {}
         }
     });
 
+
+    if($('#api_to').val().length !=0) {
+        $('#place_order').attr('disabled', false);            
+    } else {
+        $('#place_order').attr('disabled',true);
+    }
+
+    $('#api_to').keyup(function(){
+        $('#place_order').attr('disabled',true);
+    });
+
+    $("form.woocommerce-checkout").on('submit', function(e){
+        console.log("submitting checkout");
+
+        if ($('#place_order').is(':disabled')) {
+            console.log("checkout is disabled");
+            e.preventDefault();
+        }    
+     });
+   
+
     function sendRequest(to_name, to_lat, to_long) {
+        $('#place_order').attr('disabled',true);
         $.ajax({
             url: ajax_object.ajaxurl,
             type : 'post',
@@ -52,13 +74,30 @@ function initMap() {}
             success: function (res) {
                 console.log('response', res);
                 let data = JSON.parse(res);
+
+                console.log('responseData', data);
+
                 if (data.status) {
                     let price = data.data.amount;
                     if (price) {
                         $('.loader').hide();
                         $('#submitBtn').hide();
-                        passDeliveryInfo();
-                        location.reload();
+                        $.ajax({
+                            url: ajax_object.ajaxurl,
+                            type : 'post',
+                            data: {
+                                'action':'displayDelivery',
+                            },
+                            success: function (res) {
+                                 console.log(res);
+                                 location.reload();
+                            },
+                            error: function(errorThrown){
+                                console.log(errorThrown);
+                                location.reload();
+
+                            }
+                        });
                     }
                     else {
                         $('.loader').hide();
@@ -77,21 +116,6 @@ function initMap() {}
             error: function(errorThrown){
                 console.log('ero', errorThrown);
                 $('.loader').hide();
-            }
-        });
-    }
-    function passDeliveryInfo() {
-        $.ajax({
-            url: ajax_object.ajaxurl,
-            type : 'post',
-            data: {
-                'action':'displayDelivery',
-            },
-            success: function (res) {
-                 console.log(res);
-            },
-            error: function(errorThrown){
-                console.log(errorThrown);
             }
         });
     }

@@ -2,8 +2,11 @@
  * All of the CSS for your public-facing functionality should be
  * included in this file.
  */
-.sendy-api{
+ .sendy-api{
     margin-bottom: 10px
+}
+.sendy-delivery-address:nth-child(2) {
+    display: none;
 }
 
 .block_content blockquote {
@@ -176,7 +179,8 @@ ul {
 #api_to{
     background-color: #EBEEF5 !important;
     width: 100%;
-    font-size: 15px
+    font-size: 14px;
+    border: 1px solid #2a7fc3;
 }
 #pricing{
     display: none;
@@ -188,6 +192,7 @@ p {
 #delivery-info{
     /*color: #f57f20;*/
     /*border:1px solid lightgrey;*/
+    margin-top: 10px;
     font-size:14px;
     background-color: #EBEEF5;
     padding: 6px 0px;
@@ -224,4 +229,7 @@ input:-ms-input-placeholder { /* Internet Explorer 10+ */
     color: #0c5460;
     background-color: #d1ecf1;
     border-color: #bee5eb;
+}
+span.woocommerce-Price-amount.amount {
+    float: right;
 }
