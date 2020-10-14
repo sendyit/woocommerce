@@ -338,9 +338,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             </div>
             ';
     }
-
-     add_action( 'woocommerce_cart_totals_before_shipping', 'get_delivery_address', 10, 0 ); 
-     add_action( 'woocommerce_review_order_before_cart_contents', 'get_delivery_address', 10, 0 ); 
+    add_action( 'woocommerce_cart_totals_before_shipping', 'get_delivery_address', 10, 0 ); 
+    add_action( 'woocommerce_before_checkout_billing_form', 'get_delivery_address', 10, 0 ); 
    
     function add_js_scripts()
     {

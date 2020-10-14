@@ -13,6 +13,14 @@ function initMap() {}
         initMap = function() {
             console.log('initializing maps');
             $('#api_to').val($.cookie('name'));
+        }
+    });
+
+    $('#api_to').keyup(function(){
+        console.log("$('#api_to').val()", $('#api_to').val());
+        
+        if (typeof google === 'object' && typeof google.maps === 'object') {
+            console.log("autocomplete", $("#api_to")[0]);
             let country = 'ke';
             let options = {
                 componentRestrictions: {country: country},
@@ -20,20 +28,18 @@ function initMap() {}
             };
             let autocomplete = new google.maps.places.Autocomplete($("#api_to")[0], options);
             google.maps.event.addListener(autocomplete, 'place_changed',
-                function () {
-                    let place = autocomplete.getPlace();
-                    let to_name = place.name;
-                    let to_lat = place.geometry.location.lat();
-                    let to_long = place.geometry.location.lng();
-                    sendRequest(to_name, to_lat, to_long);
-                    $.cookie('name', to_name);
-                });
+            function () {
+                let place = autocomplete.getPlace();
+                let to_name = place.name;
+                let to_lat = place.geometry.location.lat();
+                let to_long = place.geometry.location.lng();
+                sendRequest(to_name, to_lat, to_long);
+                $.cookie('name', to_name);
+            });
+        } else {
+            $.getScript("https://maps.googleapis.com/maps/api/js?&libraries=places&key=AIzaSyD5y2Y1zfyWCWDEPRLDBDYuRoJ8ReHYXwY&callback=initMap");
         }
-    });
 
-
-    $('#api_to').keyup(function(){
-        console.log("$('#api_to').val()", $('#api_to').val());
         if($('#api_to').val().length !=0) {
             $('#place_order').attr('disabled', false);            
         } else {
