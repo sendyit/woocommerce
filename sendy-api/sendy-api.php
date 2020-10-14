@@ -17,7 +17,7 @@ if (!defined('WPINC')) {
     die;
 }
 
-define('PLUGIN_NAME_VERSION', '1.0.1.1');
+define('SENDY_WOOCOMMERCE_SHIPPING_VERSION', '1.0.1.1');
 
 function activate_sendy_api()
 {
