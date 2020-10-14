@@ -1,5 +1,7 @@
 # Sendy Ecommerce Woocommerce plugin
+
 === Sendy WooCommerce Shipping Plugin ===
+
 Contributors: thegeektets , Dervine
 Tags: WooCommerce, ECommerce, Shipping , Sendy Logistics , Logistics
 Requires at least: 4.7
