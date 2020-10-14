@@ -319,7 +319,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
     function get_delivery_address()
     {
-        echo '<div class="sendy-api">
+        echo '<div class="sendy-delivery-address">
+            <div class="sendy-api">
             <div class="input-block">
                <input class="input" id="api_to" type="text" placeholder="Enter A Delivery Address to Get A Sendy Quote">
             </div>
@@ -334,11 +335,13 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 Please choose a location within Nairobi to deliver with Sendy.
             </div>
             <div id="error-block" class="alert alert-danger">
-            </div>';
+            </div>
+            </div>
+            ';
     }
 
-    add_action( 'woocommerce_cart_totals_before_shipping', 'get_delivery_address', 10, 0 ); 
-
+    add_action( 'woocommerce_cart_totals_before_shipping', 'get_delivery_address', 3, 0 ); 
+    add_action( 'woocommerce_review_order_before_cart_contents', 'get_delivery_address', 10, 0 ); 
 
     function add_js_scripts()
     {
@@ -509,9 +512,11 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     function displayDelivery()
     {
         if (isset($_POST)) {
+            $to_name = WC()->session->get( 'sendyToName');
 
             echo '<div id="delivery-info" class="alert alert-info">
-                Orders will be delivered on the same day via Sendy.
+                 Delivery Address : '.$to_name.' </br>
+                 Orders will be delivered on the same day via Sendy. 
             </div>';
         }
     }
