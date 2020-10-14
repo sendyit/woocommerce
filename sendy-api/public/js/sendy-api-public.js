@@ -19,6 +19,9 @@ function initMap() {}
                 // types: ['address']
             };
             let autocomplete = new google.maps.places.Autocomplete($("#api_to")[0], options);
+
+            console.log("autocomplete", $("#api_to")[0]);
+            
             google.maps.event.addListener(autocomplete, 'place_changed',
                 function () {
                     let place = autocomplete.getPlace();
@@ -34,6 +37,18 @@ function initMap() {}
 
     $('#api_to').keyup(function(){
         console.log("$('#api_to').val()", $('#api_to').val());
+
+        $('#api_to').val($.cookie('name'));
+            let country = 'ke';
+            let options = {
+                componentRestrictions: {country: country},
+                // types: ['address']
+            };
+        let autocomplete = new google.maps.places.Autocomplete($("#api_to")[0], options);
+        if(autocomplete === undefined) {
+            $.getScript("https://maps.googleapis.com/maps/api/js?&libraries=places&key=AIzaSyD5y2Y1zfyWCWDEPRLDBDYuRoJ8ReHYXwY&callback=initMap");
+        }
+
         if($('#api_to').val().length !=0) {
             $('#place_order').attr('disabled', false);            
         } else {
