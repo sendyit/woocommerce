@@ -32,20 +32,20 @@ function initMap() {}
     });
 
 
-    if($('#api_to').val().length !=0) {
-        $('#place_order').attr('disabled', false);            
-    } else {
-        $('#place_order').attr('disabled',true);
-    }
-
     $('#api_to').keyup(function(){
-        $('#place_order').attr('disabled',true);
+        console.log("$('#api_to').val()", $('#api_to').val());
+        if($('#api_to').val().length !=0) {
+            $('#place_order').attr('disabled', false);            
+        } else {
+            $('#place_order').attr('disabled',true);
+        }
     });
 
     $("form.woocommerce-checkout").on('submit', function(e){
         console.log("submitting checkout");
 
-        if ($('#place_order').is(':disabled')) {
+        if($('#api_to').val().length ==0) {
+            $('#place_order').attr('disabled',true);
             console.log("checkout is disabled");
             e.preventDefault();
         }    
@@ -73,6 +73,8 @@ function initMap() {}
             },
             success: function (res) {
                 console.log('response', res);
+                $('#place_order').attr('disabled',false);
+
                 let data = JSON.parse(res);
 
                 console.log('responseData', data);
@@ -115,6 +117,7 @@ function initMap() {}
                 },
             error: function(errorThrown){
                 console.log('ero', errorThrown);
+                $('#place_order').attr('disabled',false);
                 $('.loader').hide();
             }
         });

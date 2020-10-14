@@ -35,7 +35,6 @@ register_activation_hook(__FILE__, 'activate_sendy_api');
 register_deactivation_hook(__FILE__, 'deactivate_sendy_api');
 
 require plugin_dir_path(__FILE__) . 'includes/class-sendy-api.php';
-
     /*
      * Check if WooCommerce is active
      */
@@ -340,9 +339,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             ';
     }
 
-    add_action( 'woocommerce_cart_totals_before_shipping', 'get_delivery_address', 10, 0 ); 
-    add_action( 'woocommerce_review_order_before_cart_contents', 'get_delivery_address', 10, 0 ); 
-
+     add_action( 'woocommerce_cart_totals_before_shipping', 'get_delivery_address', 10, 0 ); 
+     add_action( 'woocommerce_review_order_before_cart_contents', 'get_delivery_address', 10, 0 ); 
+   
     function add_js_scripts()
     {
         wp_enqueue_script('moment', plugin_dir_url(__FILE__) . '/public/js/cookie.js', array('jquery'), '1.0', true);
