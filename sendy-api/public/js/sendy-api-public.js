@@ -31,13 +31,26 @@ function initMap() {}
         }
     });
 
-    $('#place_order').attr('disabled',true);
+
+    if($('#api_to').val().length !=0) {
+        $('#place_order').attr('disabled', false);            
+    } else {
+        $('#place_order').attr('disabled',true);
+    }
+
     $('#api_to').keyup(function(){
-        if($(this).val().length !=0)
-            $('#place_order').attr('disabled', false);            
-        else
-            $('#place_order').attr('disabled',true);
+        $('#place_order').attr('disabled',true);
     });
+
+    $("form.woocommerce-checkout").on('submit', function(e){
+        console.log("submitting checkout");
+
+        if ($('#place_order').is(':disabled')) {
+            console.log("checkout is disabled");
+            e.preventDefault();
+        }    
+     });
+   
 
     function sendRequest(to_name, to_lat, to_long) {
         $('#place_order').attr('disabled',true);
