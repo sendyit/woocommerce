@@ -367,9 +367,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     {
         //if post is set
         if (isset($_POST['to_name'])) {
-            $to_name = $_POST['to_name'];
-            $to_lat = $_POST['to_lat'];
-            $to_long = $_POST['to_long'];
+            $to_name = sanitize_text_field($_POST['to_name']);
+            $to_lat =  sanitize_text_field($_POST['to_lat']);
+            $to_long = sanitize_text_field($_POST['to_long']);
             //then update session
             WC()->session->set( 'sendyToName' , $to_name );
             WC()->session->set( 'sendyToLat' , $to_lat );
