@@ -5,6 +5,9 @@
  .sendy-api{
     margin-bottom: 10px
 }
+.sendy-delivery-address:nth-child(2) {
+    display: none;
+}
 
 .block_content blockquote {
     margin-top: 10px;
