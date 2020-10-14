@@ -342,8 +342,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
     function add_js_scripts()
     {
-        wp_register_script('moment', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js', null, null, true);
-        wp_enqueue_script('moment');
         wp_enqueue_script('moment', plugin_dir_url(__FILE__) . '/public/js/cookie.js', array('jquery'), '1.0', true);
         wp_enqueue_script('cookie-script', plugin_dir_url(__FILE__) . '/public/js/cookie.js', array('jquery'), '1.0', true);
         wp_enqueue_script('ajax-script', plugin_dir_url(__FILE__) . '/public/js/sendy-api-public.js', array('jquery'), '1.0', true);
