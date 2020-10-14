@@ -1,6 +1,15 @@
+=== Sendy WooCommerce Shipping Plugin ===
+Contributors: thegeektets , Dervine
+Tags: WooCommerce, ECommerce, Shipping , Sendy Logistics , Logistics
+Requires at least: 4.7
+Tested up to: 5.5
+Stable tag: 4.3
+Requires PHP: 7.0
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
 # Sendy Ecommerce Woocommerce plugin
 This module integrates Sendy delivery service to the customers shopping flow
-
 
 ## Wordpress Installation
  - Download wordpress here :- https://wordpress.org/download/
