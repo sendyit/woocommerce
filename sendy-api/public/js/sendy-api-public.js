@@ -34,18 +34,12 @@ function initMap() {}
         }
     });
 
-
     $('#api_to').keyup(function(){
         console.log("$('#api_to').val()", $('#api_to').val());
-
-        $('#api_to').val($.cookie('name'));
-            let country = 'ke';
-            let options = {
-                componentRestrictions: {country: country},
-                // types: ['address']
-            };
-        let autocomplete = new google.maps.places.Autocomplete($("#api_to")[0], options);
-        if(autocomplete === undefined) {
+        
+        if (typeof google === 'object' && typeof google.maps === 'object') {
+            console.log("autocomplete", $("#api_to")[0]);
+        } else {
             $.getScript("https://maps.googleapis.com/maps/api/js?&libraries=places&key=AIzaSyD5y2Y1zfyWCWDEPRLDBDYuRoJ8ReHYXwY&callback=initMap");
         }
 
