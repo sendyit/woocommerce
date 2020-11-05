@@ -11,7 +11,7 @@ function initMap() {}
 
     $(() => {
         initMap = function() {
-            console.log('initializing maps');
+            console.log('initializing public maps');
             $('#api_to').val($.cookie('name'));
         }
     });
@@ -34,7 +34,7 @@ function initMap() {}
                 let to_lat = place.geometry.location.lat();
                 let to_long = place.geometry.location.lng();
                 sendRequest(to_name, to_lat, to_long);
-                $.cookie('name', to_name);
+                // $.cookie('name', to_name);
             });
         } else {
             $.getScript("https://maps.googleapis.com/maps/api/js?&libraries=places&key=AIzaSyD5y2Y1zfyWCWDEPRLDBDYuRoJ8ReHYXwY&callback=initMap");

@@ -4,7 +4,7 @@
  * Plugin Name:       Sendy WooCommerce Shipping
  * Plugin URI:        https://github.com/sendyit/woocommerce
  * Description:       This is the Sendy WooCommerce Plugin for Sendy Public API.
- * Version:           1.0.1.1
+ * Version:           1.0.1.2
  * Author:            Sendy Engineering
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
@@ -17,7 +17,7 @@ if (!defined('WPINC')) {
     die;
 }
 
-define('SENDY_WOOCOMMERCE_SHIPPING_VERSION', '1.0.1.1');
+define('SENDY_WOOCOMMERCE_SHIPPING_VERSION', '1.0.1.2');
 
 function activate_sendy_api()
 {
@@ -300,8 +300,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
     function register_session()
     {
-        if (!session_id())
+        if (!session_id()){
             session_start();
+       }
     }
 
     add_action('init', 'register_session');
@@ -519,6 +520,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         }
     }
 
+    
     add_action('wp_ajax_nopriv_displayDelivery', 'displayDelivery');
     add_action('wp_ajax_displayDelivery', 'displayDelivery');
 
@@ -528,7 +530,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         if(WC()->session->get( 'qouteSet')){
             $cost = WC()->session->get( 'sendyOrderCost');
         } else {
-            $cost = 250; // default
+            $cost = 0; // default
         }
         
         if (isset($rates['sendy-woocommerce-shipping'])) {
@@ -541,6 +543,15 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     add_filter('woocommerce_package_rates', 'setSendyDeliveryCost', 10, 2);
 
     add_action('woocommerce_thankyou', 'completeOrder', 10, 1);
+
+    add_action('woocommerce_checkout_process', 'validateSendyQoute');
+
+    function validateSendyQoute() {
+        $cost = WC()->session->get('sendyOrderCost');
+        if(!isset($cost) ){
+             wc_add_notice(__('Sendy delivery cost has not been calculated , please enter a delivery address'), 'error');
+        }
+    }
 
     function completeOrder($order_id)
     {   
