@@ -4,7 +4,7 @@
  * Plugin Name:       Sendy WooCommerce Shipping
  * Plugin URI:        https://github.com/sendyit/woocommerce
  * Description:       This is the Sendy WooCommerce Plugin for Sendy Public API.
- * Version:           1.0.1.2
+ * Version:           1.0.1.3
  * Author:            Sendy Engineering
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
@@ -515,7 +515,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
             echo '<div id="delivery-info" class="alert alert-info">
                  Delivery Address : '.$to_name.' </br>
-                 Orders will be delivered on the same day via Sendy. 
+                 Orders will be delivered via Sendy. 
             </div>';
         }
     }
@@ -544,9 +544,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
     add_action('woocommerce_thankyou', 'completeOrder', 10, 1);
 
-    add_action('woocommerce_checkout_process', 'validateSendyQoute');
+    add_action('woocommerce_checkout_process', 'wh_phoneValidateCheckoutFields');
 
-    function validateSendyQoute() {
+    function wh_phoneValidateCheckoutFields() {
         $cost = WC()->session->get('sendyOrderCost');
         if(!isset($cost) ){
              wc_add_notice(__('Sendy delivery cost has not been calculated , please enter a delivery address'), 'error');
