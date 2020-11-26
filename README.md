@@ -5,11 +5,15 @@
 Contributors: thegeektets , Dervine
 Tags: WooCommerce, ECommerce, Shipping , Sendy Logistics , Logistics
 Requires at least: 4.7
-Tested up to: 5.5
+Tested up to: 5.6
 Stable tag: 4.3
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Plugin Url : https://wordpress.org/plugins/sendy-ecommmerce/
+
+
+# Sendy Woocommerce Shipping Plugin
 
 This module integrates Sendy delivery service to the customers shopping flow
 
@@ -21,15 +25,15 @@ This module integrates Sendy delivery service to the customers shopping flow
  - On your wordpress Admin, click on 'Plugins/Add New' and search for Woocommerce.
  - Setup the installation
  
-## Sendy Ecommerce Woocommerce plugin Installation( Woocommerce 3.5.0)
- - Download Sendy Ecommerce from our github repo.
- - Unzip (decompress) the archive file (woocommerce-master.zip).
- - Place the folder(sendy-api) in your wordpress/wp-contents/plugins folder.
- - Go to your wordpress admin, in the "Plugins" tab, Sendy Ecommerce will be listed as a plugin.
+## Sendy Woocommerce Shipping Plugin Installation
+ - On your wordpress Admin, click on 'Plugins/Add New' and search for Sendy WooCommerce Shipping.
+ - Setup the installation
+
+ - You can aslo download latest plugin from https://wordpress.org/plugins/sendy-ecommmerce/
  
   ![alt text](https://raw.githubusercontent.com/sendyit/woocommerce/master/sendy-api/images/activate.png)
   
-  
+
   
  - Activate the plugin.
  - Still on wordpress Admin, go to Woocommerce/settings/shipping/Sendy Ecommerce.
