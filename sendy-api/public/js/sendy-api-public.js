@@ -12,7 +12,7 @@ function initMap() {}
     $(() => {
         initMap = function() {
             console.log('initializing public maps');
-            $('#api_to').val($.cookie('name'));
+            $('#api_to').val('');
         }
     });
 

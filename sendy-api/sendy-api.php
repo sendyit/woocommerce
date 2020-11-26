@@ -4,7 +4,7 @@
  * Plugin Name:       Sendy WooCommerce Shipping
  * Plugin URI:        https://github.com/sendyit/woocommerce
  * Description:       This is the Sendy WooCommerce Plugin for Sendy Public API.
- * Version:           1.0.1.3
+ * Version:           1.0.1.4
  * Author:            Sendy Engineering
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
@@ -17,7 +17,7 @@ if (!defined('WPINC')) {
     die;
 }
 
-define('SENDY_WOOCOMMERCE_SHIPPING_VERSION', '1.0.1.3');
+define('SENDY_WOOCOMMERCE_SHIPPING_VERSION', '1.0.1.4');
 
 function activate_sendy_api()
 {
@@ -236,15 +236,14 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                 }
 
-                public function calculate_shipping($package)
-                {
+                public function calculate_shipping( $package = array() ) {
                     $weight = 0;
                     $cost = 0;
                     $country = $package["destination"]["country"];
 
                     foreach ($package['contents'] as $item_id => $values) {
                         $_product = $values['data'];
-                        $weight = $weight + $_product->get_weight() * $values['quantity'];
+                        $weight = $weight + (int)$_product->get_weight() * $values['quantity'];
                     }
 
                     $weight = wc_get_weight($weight, 'kg');
