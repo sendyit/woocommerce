@@ -4,7 +4,7 @@
  * Plugin Name:       Sendy WooCommerce Shipping
  * Plugin URI:        https://github.com/sendyit/woocommerce
  * Description:       This is the Sendy WooCommerce Plugin for Sendy Public API.
- * Version:           1.0.1.4
+ * Version:           1.0.1.5
  * Author:            Sendy Engineering
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
@@ -17,7 +17,7 @@ if (!defined('WPINC')) {
     die;
 }
 
-define('SENDY_WOOCOMMERCE_SHIPPING_VERSION', '1.0.1.4');
+define('SENDY_WOOCOMMERCE_SHIPPING_VERSION', '1.0.1.5');
 
 function activate_sendy_api()
 {
@@ -364,7 +364,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     add_action('admin_enqueue_scripts', 'add_admin_scripts');
 
     
-    function getPriceQuote($delivery = false, $type = "quote",  $pick_up_date = null,    $note = "Sample Note", $recepient_name = "Dervine N", $recepient_phone = "0716163362", $recepient_email = "ndervine@sendy.co.ke")
+    function getPriceQuote($delivery = false, $type = "quote",  $pick_up_date = null,    $note = "", $recepient_name = "Dervine N", $recepient_phone = "0716163362", $recepient_email = "ndervine@sendy.co.ke")
     {
         //if post is set
         if (isset($_POST['to_name'])) {
