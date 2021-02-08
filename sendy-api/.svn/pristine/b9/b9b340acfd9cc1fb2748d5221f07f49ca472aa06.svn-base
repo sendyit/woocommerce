@@ -1,0 +1,231 @@
+/**
+ * All of the CSS for your public-facing functionality should be
+ * included in this file.
+ */
+.sendy-api{
+    margin-bottom: 10px
+}
+.block_content blockquote {
+    margin-top: 10px;
+    height: auto;
+    width: auto;
+    background-color: #ffffff;
+    color: #444;
+    font-size: 15px;
+    /*font-style: italic;*/
+    padding: 5px;
+    text-align: center
+}
+
+.block_content blockquote span {
+    display: block;
+    color: #900;
+    text-align: right;
+    margin-top: 10px;
+    font-style: normal;
+    font-weight: bold
+}
+
+.input {
+    color: #575757;
+    font-size: 13px;
+    font-style: normal;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    padding: 5px;
+    margin-bottom: 10px;
+    display: inline-block;
+    width: 100%;
+    text-align: left
+}
+ul {
+    margin: 0 0 0 0 !important;
+    padding: 0;
+}
+.input:focus {
+    border-color: #1782c5 !important;
+    outline: none
+}
+.input-block{
+    margin: auto
+}
+
+.btn {
+    background-color: #1782c5;
+    color: white;
+    font-size: 13px;
+    font-style: normal;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center
+}
+
+#submitBtn {
+    display: none;
+    margin-bottom: 20px
+}
+.btn:hover {
+    background-color: #f57f20;
+    color: white;
+    outline: none
+}
+.btn:focus {
+    outline: none
+}
+
+.divhidden {
+    height: auto;
+    width: auto;
+    display: none;
+    margin-bottom: 10px;
+    /*background-color: #f57f20;*/
+    color: #1782c5 !important;
+    font-size: 13px;
+    font-family: "Open Sans", Helvetica, Arial, sans-serif!important;
+    /*padding: 30px;*/
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center
+}
+
+.loader {
+    border: 1px solid #1782c5;
+    border-radius: 50%;
+    display: none;
+    border-top: 1px solid #f3f3f3;
+    width: 60px;
+    height: 60px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+    -webkit-animation: spin 1s linear infinite; /* Safari */
+    animation: spin 1s linear infinite
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+.show-price {
+    display: inline-block;
+}
+.show-currency {
+    display: inline-block;
+    padding-bottom: 5px;
+}
+.show-type {
+    /*padding: 1px;*/
+    font-size: 11px;
+    border: 1px solid #1782c5;
+    margin: 0px auto;
+    width: 50px;
+    background-color: white;
+    border-radius: 4px
+}
+.imagey{
+    height: 55px;
+    border: 1px solid #1782c5;
+    width: 55px;
+    margin: 0px auto;
+    border-radius: 50%;
+    margin-bottom: -15px;
+    /*background-image:url('../img/direct.png');*/
+    padding-top: 10px;
+    font-size: 15px;
+    color: rgba(153, 153, 153, 0.71)
+}
+#place_order{
+    background-color: #f57f20;
+    padding: 9px !important;
+    color: #fff;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    width: 360px;
+    margin-top: 0px;
+    text-transform: capitalize !important;
+    font-size: 16px !important;
+    transition-delay: 1s;
+    -moz-transition: all 1s;
+    -webkit-transition: all 1s;
+    transition: all 1s;
+}
+#info-block{
+    display: none;
+}
+#error-block{
+    display: none;
+}
+#api_to{
+    background-color: #EBEEF5 !important;
+    width: 100%;
+    font-size: 14px;
+    border: 1px solid #2a7fc3;
+}
+#pricing{
+    display: none;
+    color: #1782c5
+}
+p {
+    margin: 1.41575em 0 1.41575em !important;
+}
+#delivery-info{
+    /*color: #f57f20;*/
+    /*border:1px solid lightgrey;*/
+    margin-top: 10px;
+    font-size:14px;
+    background-color: #EBEEF5;
+    padding: 6px 0px;
+    border-radius: 3px;
+}
+input::-webkit-input-placeholder { /* WebKit browsers */
+    color:    #555;
+}
+input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:    #555;
+}
+input::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:    #555;
+}
+input:-ms-input-placeholder { /* Internet Explorer 10+ */
+    color:    #555;
+}
+/*# sourceMappingURL=front.css.map */
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.alert {
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+}
+.alert-info {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+}
+span.woocommerce-Price-amount.amount {
+    float: right;
+}

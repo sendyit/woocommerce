@@ -117,7 +117,7 @@ function initMap() {}
                     $('.loader').hide();
                     $('#submitBtn').hide();
                     $('#error-block').show();
-                    $("#error-block").text(data.description||'an error occured while calculating Sendy shipping cost');
+                    $("#error-block").text(data.description);
                 }
 
                 },
