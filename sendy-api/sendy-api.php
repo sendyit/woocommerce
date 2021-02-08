@@ -4,7 +4,7 @@
  * Plugin Name:       Sendy WooCommerce Shipping
  * Plugin URI:        https://github.com/sendyit/woocommerce
  * Description:       This is the Sendy WooCommerce Plugin for Sendy Public API.
- * Version:           1.0.1.6
+ * Version:           1.1.0
  * Author:            Sendy Engineering
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
@@ -116,11 +116,27 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             'type' => 'text'
                         ),
 
-                       
+                        'operating_days' => array(
+                            'title' => __('Shop Operating Days', 'sendy-woocommerce-shipping'),
+                            'type' => 'multiselect',
+                            'default' => ['1','2','3','4','5'],
+                            'description'=>'week days are selected on default',
+                            'options' => array(
+                            'blank' => __('Select operating days', 'sendy-woocommerce-shipping'),
+                                1 => __('Monday',   'sendy-woocommerce-shipping'),
+                                2 => __('Tuesday',   'sendy-woocommerce-shipping'),
+                                3 => __('Wednesday',   'sendy-woocommerce-shipping'),
+                                4 => __('Thursday', 'sendy-woocommerce-shipping'),
+                                5 => __('Friday', 'sendy-woocommerce-shipping'),
+                                6 => __('Saturday', 'sendy-woocommerce-shipping'),
+                                0 => __('Sunday',   'sendy-woocommerce-shipping')
+                            )
+                        ),
 
                         'open_hours' => array(
                             'title' => __('Shop Opening Hours', 'sendy-woocommerce-shipping'),
                             'type' => 'select',
+                            'default' => '9',
                             'options' => array(
                                 'blank' => __('Select opening hour', 'sendy-woocommerce-shipping'),
                                 '6' => __('6:00 AM',   'sendy-woocommerce-shipping'),
@@ -144,6 +160,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         'close_hours' => array(
                             'title' => __('Shop Closing Hours', 'sendy-woocommerce-shipping'),
                             'type' => 'select',
+                            'default' => '17',
                             'options' => array(
                                 'blank' => __('Select closing hour', 'sendy-woocommerce-shipping'),
                                 '6' => __('6:00 AM',   'sendy-woocommerce-shipping'),
@@ -166,6 +183,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                         'vendor_type' => array(
                             'title' => __('Default Vendor Type', 'sendy-woocommerce-shipping'),
+                            'default'=>'1',
                             'type' => 'select',
                             'options' => array(
                                 'blank' => __('Select Vendor Type', 'sendy-woocommerce-shipping'),
@@ -387,6 +405,11 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         $to_long = $to_long;
         $sendy_settings = get_option('woocommerce_sendy-woocommerce-shipping_settings');
 
+        if($pick_up_date === null) {
+            $pick_up_date =  date('m/d/Y h:i:s a', time());
+        }
+
+
         $api_key = $sendy_settings['sendy_api_key'];
         $api_username = $sendy_settings['sendy_api_username'];
         $pickup = $sendy_settings['shop_location'];
@@ -402,11 +425,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
         $notify_recipient = boolval($sendy_settings['notify_recipient']) ? 'true' : 'false';
         $notify_sender = boolval($sendy_settings['notify_sender']) ? 'true' : 'false';
-
-        if($pick_up_date === null) {
-            $pick_up_date =  date('m/d/Y h:i:s a', time());
-        }
-
 
         $request = '{
                       "command": "request",
@@ -507,18 +525,33 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     add_action('wp_ajax_getPriceQuote', 'getPriceQuote');
 
     add_action('woocommerce_after_shipping_rate', 'displayDelivery' , 20, 2 );
+
+    add_filter('woocommerce_checkout_update_order_review', 'clear_wc_shipping_rates_cache');
+
+    function clear_wc_shipping_rates_cache(){
+        $packages = WC()->cart->get_shipping_packages();
+
+        foreach ($packages as $key => $value) {
+            $shipping_session = "shipping_for_package_$key";
+
+            unset(WC()->session->$shipping_session);
+        }
+    }
     
     function displayDelivery( $method, $index )
     {
         if (isset($_POST)) {
             if( $method->get_id() == 'sendy-woocommerce-shipping' ){
                 $to_name = WC()->session->get( 'sendyToName');
+                $delivery_cost = WC()->session->get( 'sendyOrderCost');
 
                 echo '<div id="delivery-info" class="alert alert-info">
+                    Delivery Cost : '.$delivery_cost.' KES </br>
                     Delivery Address : '.$to_name.' </br>
                     Orders will be delivered via Sendy. 
                 </div>';
             }
+            return true;
         }
     }
 
@@ -528,8 +561,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
     function setSendyDeliveryCost($rates, $package)
     {   
-
-        if(WC()->session->get( 'qouteSet')){
+        if(WC()->session->get('qouteSet')){
             $cost = WC()->session->get( 'sendyOrderCost');
         } else {
             $cost = 0; // default
@@ -555,6 +587,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         }
     }
 
+  
     function completeOrder($order_id)
     {   
 
@@ -564,35 +597,79 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $orderNo = WC()->session->get( 'sendyOrderNo');
 
                 $order = new WC_Order($order_id);
-                $note = $order->customer_message;
-                $fName = $order->billing_first_name;
-                $lName = $order->billing_last_name;
+                $note =  get_post_meta($order_id, '_customer_message', true);
+                $fName = get_post_meta($order_id, '_billing_first_name', true);
+                $lName = get_post_meta($order_id, '_billing_last_name', true);
                 $name = $fName . ' ' . $lName;
-                $phone = $order->billing_phone;
-                $email = $order->billing_email;
+                $phone = get_post_meta($order_id, '_billing_phone', true);
+                $email = get_post_meta($order_id, '_billing_email', true);
+
                 $sendy_settings = get_option('woocommerce_sendy-woocommerce-shipping_settings');
                 $order_no = $orderNo;
-                $sendy_hour = 14;
+                
+                //set 18hours as the last time of the day to deliver e-commerce orders
+                //this should be well above most stores
+                $sendy_hour = 18;
+
                 $type = "delivery";
+
+                $sendy_hour = 18;
                 $open_hour = $sendy_settings['open_hours'];
-                $close_hour = $sendy_settings['close_hours'];
-                $order_hour = $var = date('H', strtotime('+3 hours'));
-                if ($order_hour < $open_hour && $order_hour >= $close_hour && $close_hour < 20) {
-                    $pick_up_date = date("Y-m-d H:i:s", strtotime('+3 hours'));
-                } else if ($order_hour >= $open_hour && $order_hour < $sendy_hour) {
-                    $pick_up_date = date("Y-m-d H:i:s", strtotime('+3 hours'));
-                } else if ($order_hour >= $sendy_hour && $order_hour < $close_hour && $close_hour < 20) {
-                    $pick_up_date = date("Y-m-d H:i:s", mktime(8, 00, 0, date('n'), date('j') + 1, date('Y')));
-                } else {
-                    $pick_up_date = date("Y-m-d H:i:s", strtotime('+3 hours'));
+                $close_hour = $sendy_settings['close_hours'] - 1; //compesation for dispatch and delivery
+                $order_hour = date('H', strtotime('+3 hours'));
+                $order_day  = date('w');
+                $check_delivery_day = $order_day;
+                //check days
+        
+                $delivery_days = $sendy_settings['operating_days'];
+        
+                if(count($delivery_days)<1){
+                    //default delivery days when not set to all days
+                    $delivery_days = ['0','1','2','3','4','5','6'];
                 }
+        
+                //find suitable delivery day
+                while(!in_array($check_delivery_day, $delivery_days)){
+                    if($check_delivery_day < 6){
+                        $check_delivery_day = $check_delivery_day + 1;
+                    } else if($check_delivery_day === 6) {
+                        $check_delivery_day=1;
+                    }
+                }
+        
+                //delivery day found
+                $delivery_day = $check_delivery_day;
+        
+                //find suitable delivery hour
+                $delivery_hour = $order_hour;
+                if($delivery_day === $order_day) {
+                    // same day delivery
+                    // check if shop is open
+                    if($order_hour > $open_hour && $order_hour < $close_hour && $order_hour < $sendy_hour){
+                        $delivery_hour = $order_hour;
+                    } else {
+                      // move delivery to next day
+                      if($delivery_day < 6){
+                        $delivery_day = $delivery_day + 1;
+                      } else {
+                          $delivery_day = 0;
+                      }
+                      $delivery_hour = $order_hour;
+                    }
+                } else {
+                    // set delivery day during opening time
+                    $delivery_hour = $open_hour;
+                }
+                $pick_up_date = date("Y-m-d H:i:s", mktime($delivery_hour, date('i'), 0, date('n'), date('j') +abs($delivery_day-$order_day) , date('Y')));
 
                 $orderDetails = getPriceQuote(true, $type, $pick_up_date, $note, $name, $phone, $email);
+                
                 $orderDetails = json_decode($orderDetails, true);
 
                 if($orderDetails['status'] === true) {
                     $tracking_link = $orderDetails['data']['tracking_link'];
-                    echo "<p><a target=\"_tab\" href='" . $tracking_link . "'> Click Here To Track Your Sendy Order. </a></p>";
+                    echo "<p> You order will delivered on ".$pick_up_date." via Sendy </br>
+                             <a target=\"_tab\" href='" . $tracking_link . "'> Click here to track your order. </a></p>";
 
                 }   
                 
