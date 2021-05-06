@@ -404,6 +404,54 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         $to_lat = $to_lat;
         $to_long = $to_long;
         $sendy_settings = get_option('woocommerce_sendy-woocommerce-shipping_settings');
+        $order_data = // get from order - the vendors involved
+        $vendor_data = //get from db
+        $vendor_location_data // from vendor data
+        // use location data to create the multi pickup data
+        // $pickup = $sendy_settings['shop_location'];
+        // $pickup_lat = $sendy_settings['from_lat'];
+        // $pickup_long = $sendy_settings['from_long'];
+
+        /**
+         * from location data
+         *  "from": [
+                        {
+                          "from_name": "' . $to_name . '",
+                          "from_lat": "' . $to_lat . '",
+                          "from_long": "' . $to_long . '",
+                          "from_description": ""
+                        },
+                        {
+                            "from_name": "' . $pickup . '",
+                            "from_lat": "' . $pickup_lat . '",
+                            "from_long": "' . $pickup_long . '",
+                            "from_description": ""
+                          }
+                        ],
+         */
+        // new recepient information to match this
+        /*
+         "recepient": [
+      {
+        "recepient_name": "Sender Name",
+        "recepient_phone": "0709779779",
+        "recepient_email": "sendyer@gmail.com",
+        "recepient_notes": "1st recepient specific Notes",
+        "recepient_notify": false
+      },
+      {
+        "recepient_name": "Sender Name",
+        "recepient_phone": "0709779779",
+        "recepient_email": "sendyer@gmail.com",
+        "recepient_notes": "2nd recepient specific Notes",
+        "recepient_notify": false
+      }
+    ],
+        */
+
+
+
+
 
         if($pick_up_date === null) {
             $pick_up_date =  date('m/d/Y h:i:s a', time());
@@ -412,9 +460,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
         $api_key = $sendy_settings['sendy_api_key'];
         $api_username = $sendy_settings['sendy_api_username'];
-        $pickup = $sendy_settings['shop_location'];
-        $pickup_lat = $sendy_settings['from_lat'];
-        $pickup_long = $sendy_settings['from_long'];
+        
+       
         $vendor_type = $sendy_settings['vendor_type'];
 
         $sender_name = $sendy_settings['sender_name'];
@@ -432,12 +479,20 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         "api_key": "' . $api_key . '",
                         "api_username": "' . $api_username . '",
                         "vendor_type": "'. $vendor_type .'",
-                        "from": {
-                          "from_name": "' . $pickup . '",
-                          "from_lat": "' . $pickup_lat . '",
-                          "from_long": "' . $pickup_long . '",
+                        "from": [
+                        {
+                          "from_name": "' . $to_name . '",
+                          "from_lat": "' . $to_lat . '",
+                          "from_long": "' . $to_long . '",
                           "from_description": ""
                         },
+                        {
+                            "from_name": "' . $pickup . '",
+                            "from_lat": "' . $pickup_lat . '",
+                            "from_long": "' . $pickup_long . '",
+                            "from_description": ""
+                          }
+                        ],
                         "to": {
                           "to_name": "' . $to_name . '",
                           "to_lat": "' . $to_lat . '",
